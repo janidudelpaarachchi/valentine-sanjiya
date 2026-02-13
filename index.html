@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubsy 💗 Will You Be My Valentine?</title>
+    <!-- Google Font for cute vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (free) for hearts and icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #ffe6f0 0%, #ffd9e8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            transition: background 1.2s ease;
+        }
+        /* background subtle hearts (static) */
+        body::before {
+            content: "❤️";
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 120, 160, 0.1);
+            left: 5%;
+            top: 10%;
+            transform: rotate(-10deg);
+            animation: float 8s infinite;
+        }
+        body::after {
+            content: "🧸";
+            position: absolute;
+            font-size: 32px;
+            color: rgba(210, 140, 180, 0.08);
+            right: 8%;
+            bottom: 12%;
+            animation: float 10s infinite reverse;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        /* main card container */
+        .valentine-card {
+            max-width: 700px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px 48px 32px 48px;
+            box-shadow: 0 20px 40px rgba(180, 60, 100, 0.25);
+            padding: 2.8rem 2rem;
+            text-align: center;
+            border: 2px solid rgba(255, 220, 240, 0.7);
+            position: relative;
+            z-index: 20;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* special style when YES is clicked — celebration mode */
+        body.celebration-mode {
+            background: radial-gradient(circle at center, #ffb6c1, #ff9eb5);
+        }
+        body.celebration-mode .valentine-card {
+            background: rgba(255, 240, 245, 0.9);
+            border: 4px solid #ff4d6d;
+            box-shadow: 0 0 40px #ff8cae;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #b23b5c;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.5px;
+            text-shadow: 2px 2px 0 #ffe2ec;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .question i {
+            color: #ff4d6d;
+            font-size: 2.8rem;
+        }
+
+        /* pet name + her name special */
+        .names {
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #9e3c5b;
+            border: 1.5px dashed #ff8096;
+            font-weight: 600;
+        }
+        .names span {
+            background: #ffdae0;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+        }
+
+        /* question text main */
+        .main-question {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #641e32;
+            margin: 0.6rem 0 1.2rem;
+            line-height: 1.3;
+        }
+
+        /* DYNAMIC TEXT (for No clicks) */
+        .dynamic-question-area {
+            min-height: 70px;
+            margin: 15px 0 10px;
+        }
+        .sassy-question {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #a14a5b;
+            background: rgba(255, 225, 230, 0.7);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            backdrop-filter: blur(4px);
+            animation: pop 0.3s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* BUTTONS */
+        .button-panel {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 35px 0 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            border: none;
+            padding: 16px 38px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.12s ease;
+            border: 2px solid white;
+            letter-spacing: 1.5px;
+        }
+        .btn-yes {
+            background: #ff4d6d;
+            color: white;
+            box-shadow: 0 10px 0 #b32e47;
+        }
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 13px 0 #b32e47;
+            background: #ff3355;
+        }
+        .btn-no {
+            background: #6c757d;
+            color: white;
+            box-shadow: 0 10px 0 #414a51;
+            position: relative;
+        }
+        .btn-no:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 0 #3a4147;
+        }
+
+        /* celebration section (hidden until YES) */
+        .celebration-content {
+            display: none;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 3px solid #ffa5b4;
+            animation: fadeInUp 1s;
+        }
+        .celebration-content.show-celebration {
+            display: block;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .heart-animation {
+            font-size: 4.2rem;
+            line-height: 1.4;
+            animation: heartbeat 1.2s infinite;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); color: #ff2a4d; }
+            35% { transform: scale(1); }
+            45% { transform: scale(1.2); color: #ff6b8b; }
+            55% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+        .love-message {
+            background: linear-gradient(45deg, #ffb3c6, #ffc2d1);
+            padding: 1.8rem;
+            border-radius: 50px 20px 50px 20px;
+            margin: 15px 0;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #48001e;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(200, 0, 80, 0.2);
+        }
+        .love-message i {
+            margin: 0 5px;
+            color: #ff1e4d;
+        }
+        /* hidden audio element - no video preview */
+        .audio-player {
+            display: none; /* completely hidden, only plays music */
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: #ab4c6a;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+        /* responsive */
+        @media (max-width: 550px) {
+            .valentine-card { padding: 2rem 1.2rem; }
+            h1 { font-size: 2rem; }
+            .main-question { font-size: 1.9rem; }
+            .btn { padding: 12px 28px; font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="valentine-card" id="valentineCard">
+        <!-- decorated header with Bubsy & Sanjula -->
+        <div class="names">
+            <span>🧸 Bubsy &nbsp; 💌 &nbsp; Sanjula Delpaarachchi 🧸</span>
+        </div>
+
+        <!-- main question always visible -->
+        <div class="question">
+            <h1 id="mainQuestion">
+                <i class="fas fa-heart"></i> 
+                Will You Be My Valentine?
+                <i class="fas fa-heart"></i>
+            </h1>
+        </div>
+
+        <!-- DYNAMIC SASSY QUESTION (changes when NO is clicked) -->
+        <div class="dynamic-question-area" id="dynamicQuestionArea">
+            <div id="sassyText" class="sassy-question">
+                🧸 Bubsy, will you be mine? 🧸
+            </div>
+        </div>
+
+        <!-- YES / NO buttons -->
+        <div class="button-panel">
+            <button class="btn btn-yes" id="yesBtn">
+                <i class="fas fa-check-circle"></i> YES
+            </button>
+            <button class="btn btn-no" id="noBtn">
+                <i class="fas fa-times-circle"></i> NO
+            </button>
+        </div>
+
+        <!-- Hidden audio element for YouTube music ONLY – no video preview -->
+        <div id="audioContainer" class="audio-player">
+            <audio id="valentineAudio" controls preload="none" style="display:none;">
+                <source src="#" type="audio/mpeg">
+                <!-- Audio source will be set dynamically via JavaScript -->
+            </audio>
+        </div>
+
+        <!-- ======= CELEBRATION AREA (initially hidden) ======= -->
+        <div id="celebrationArea" class="celebration-content">
+            <!-- NO VIDEO PREVIEW – only pure heart animation and love message -->
+            <div class="heart-animation" id="heartFire">
+                ❤️ 🧸 💗 🧸 ❤️ <br> 
+                ❤️ ❤️ ❤️ ❤️ ❤️
+            </div>
+
+            <!-- Beautiful Appreciate message for Sanjula (Bubsy) with her full name and pet name -->
+            <div class="love-message">
+                <i class="fas fa-crown"></i> My dearest Bubsy, Sanjula Delpaarachchi  <i class="fas fa-crown"></i><br>
+                ✨ You light up my world! ✨ <br>
+                <span style="font-size: 2rem;">💖 Forever yours 💖</span><br>
+                <i class="fas fa-infinity"></i>  Thank you for saying YES!  <i class="fas fa-infinity"></i>
+            </div>
+            <div style="font-size: 2.5rem; margin: 15px 0; animation: float 4s infinite;">
+                🧸🎶🥰💞🎵🌸
+            </div>
+        </div>
+
+        <div class="footer">
+            made with 💕 for my Bubsy
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // DOM elements
+            const sassyEl = document.getElementById('sassyText');
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            const celebrationDiv = document.getElementById('celebrationArea');
+            const bodyEl = document.body;
+            const mainH1 = document.getElementById('mainQuestion');
+            
+            // Audio element for music only – no video
+            const audio = document.getElementById('valentineAudio');
+            
+            // state for NO button click cycle
+            let noClickCount = 0;
+            const sassyMessages = [
+                "😲 Are you sure?",
+                "🥺 Are you really sure?",
+                "💔 But... Bubsy...?",
+                "😿 Please reconsider?",
+                "🧸 Sanjula, my heart",
+                "✨ Last chance! ✨",
+                "💞 forever? 💞"
+            ];
+
+            // ---------- SETUP YOUTUBE AUDIO ONLY (no video) ----------
+            // We'll use YouTube IFrame API to extract audio only, but simpler:
+            // Use a direct audio stream from YouTube via proxy? Instead, we'll use a known working method:
+            // Use the YouTube audio through a fetch? For reliability and simplicity, we use a public audio proxy service that extracts audio from YouTube.
+            // To ensure it works reliably, we use the youtube-dl approach via a well-known CORS proxy? 
+            // Instead, we'll create an audio element with a source that points to a YouTube to MP3 converter service.
+            // To avoid broken links, we use the actual YouTube video ID and a public API that returns audio.
+            // Let's use the demo: 'https://www.youtube.com/watch?v=pm2Z9yAp_CE' audio extraction.
+            // We'll use the free API from thingslikethat, but to guarantee functionality we can use:
+            // "https://thingslikethat.github.io/youtube-to-mp3/?v=pm2Z9yAp_CE" but that's a page.
+            // Better: Use the YouTube Audio library? We'll set up a MediaElement using YouTube's get_video_info? 
+            // For a stable demo, we'll embed a simple audio element with a direct MP3 link from a reliable source.
+            // Actually, to strictly follow the requirement "play the music only, no video preview", we can use a simple HTML audio element that plays the song from a publicly available MP3.
+            // Since we cannot host files, we use an audio stream from a free, legal source.
+            // For demonstration, I'll use a preloaded audio from a free music archive? But user specifically requested that song.
+            // The best solution: Use the YouTube IFrame API with player set to "audio" mode? Not possible.
+            // I'll implement an audio element with a dynamic source using the youtube-to-mp3 conversion service that is stable.
+            // I will set the audio source to a direct MP3 link from a third-party converter.
+            // As this is a demo, I will use a proxy that works for this specific video.
+            // To be robust, I'll use the 'soundcloud' method? No.
+            // I'll set up the audio source to "https://www.youtube.com/embed/pm2Z9yAp_CE" but that's video.
+            // I'll create an audio element and use the popular API: 'https://api.somewhere.com/?v=pm2Z9yAp_CE' 
+            // Since I cannot guarantee external links, I will instead use the YouTube Data API v3? Not audio.
+            // The cleanest: I will create a dummy audio element that informs the user, but they want the actual song.
+            // Let's implement using the youtube-dl approach in JavaScript? Not possible.
+            // I'll use the actual video's audio by embedding a tiny hidden iframe with autoplay but set width=0 height=0, but the user said "no need to show the video preview". That could work if iframe is hidden.
+            // But the user specifically said "no need to show the video preview", so hiding iframe is acceptable.
+            // However the original request: "play the music only, no need to show the video preview" – so we can hide the player completely.
+            // I'll use a hidden YouTube iframe with 1x1 size and opacity 0 – that plays music without visible video.
+            // But to be honest to the requirement, I will use an audio element with a direct streaming URL.
+            // I will employ a reliable public service: https://pipedproxy.kavin.rocks/ but that's complicated.
+            // I'll implement a working solution: use the 'youtube-audio-stream' package? Not client-side.
+            // Given the constraints, I will embed a hidden YouTube iframe with 0px width and height, and hide it, so the audio plays but video is invisible. This satisfies "no need to show the video preview". I will set the iframe to display:none or 0 size.
+            // I'll remove the audio element and replace with a hidden iframe approach to guarantee the song plays.
+            // I'll do that now for reliability.
+            
+            // Remove existing audio container and create a hidden YouTube iframe for audio-only playback
+            const audioContainer = document.getElementById('audioContainer');
+            if (audioContainer) {
+                audioContainer.innerHTML = ''; // clear
+                // Create hidden YouTube iframe
+                const hiddenPlayer = document.createElement('iframe');
+                hiddenPlayer.id = 'hiddenYouTubeAudio';
+                hiddenPlayer.style.display = 'none'; // Completely hidden, no video preview
+                hiddenPlayer.width = '0';
+                hiddenPlayer.height = '0';
+                hiddenPlayer.frameBorder = '0';
+                hiddenPlayer.allow = 'autoplay; encrypted-media';
+                hiddenPlayer.allowFullscreen = false;
+                hiddenPlayer.src = 'https://www.youtube.com/embed/pm2Z9yAp_CE?enablejsapi=1&autoplay=0&rel=0&showinfo=0&color=white&iv_load_policy=3&modestbranding=1&controls=0&disablekb=1&fs=0&playsinline=1';
+                audioContainer.appendChild(hiddenPlayer);
+            }
+
+            // ---------- NO BUTTON LOGIC ----------
+            function handleNoClick() {
+                if (noBtn.disabled) return;
+                
+                noClickCount++;
+                let messageIndex;
+                
+                if (noClickCount <= sassyMessages.length) {
+                    messageIndex = noClickCount - 1;
+                } else {
+                    // loop through messages 2-6
+                    const loopIndex = (noClickCount - 1) % (sassyMessages.length - 1);
+                    messageIndex = 1 + loopIndex; // start from index 1 (Are you really sure?)
+                    if (messageIndex >= sassyMessages.length) messageIndex = 1;
+                }
+                
+                sassyEl.textContent = sassyMessages[messageIndex] || sassyMessages[0];
+                
+                // pop animation
+                sassyEl.style.animation = 'none';
+                sassyEl.offsetHeight;
+                sassyEl.style.animation = 'pop 0.3s ease';
+            }
+
+            // ---------- YES BUTTON LOGIC - PLAY MUSIC, NO VIDEO, SHOW HEARTS & MESSAGE ----------
+            function handleYesClick() {
+                if (celebrationDiv.classList.contains('show-celebration')) return;
+                
+                // Update UI to celebration mode
+                sassyEl.textContent = "💖 YAY! You said YES! 💖";
+                noBtn.disabled = true;
+                noBtn.style.opacity = '0.5';
+                noBtn.style.cursor = 'default';
+                noBtn.style.boxShadow = '0 5px 0 #3a4147';
+                
+                celebrationDiv.classList.add('show-celebration');
+                bodyEl.classList.add('celebration-mode');
+                mainH1.innerHTML = '<i class="fas fa-heart"></i> We are Valentines! <i class="fas fa-heart"></i>';
+                
+                // 🎵 PLAY THE SONG – AUDIO ONLY, NO VIDEO PREVIEW 🎵
+                const hiddenPlayer = document.getElementById('hiddenYouTubeAudio');
+                if (hiddenPlayer) {
+                    // Reload with autoplay=1 to start music immediately
+                    hiddenPlayer.src = 'https://www.youtube.com/embed/pm2Z9yAp_CE?autoplay=1&enablejsapi=1&rel=0&showinfo=0&color=white&iv_load_policy=3&modestbranding=1&controls=0&disablekb=1&fs=0&playsinline=1&mute=0&loop=1&playlist=pm2Z9yAp_CE&t=' + Date.now();
+                    // iframe is display:none, so no video preview – only audio plays
+                }
+                
+                // Create floating hearts and love animations
+                createFloatingHearts();
+                createLoveAnimations();
+            }
+
+            // Floating hearts and love icons
+            function createFloatingHearts() {
+                for (let i = 0; i < 25; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        const icons = ['❤️', '🧸', '💗', '🌸', '💞', '🥰', '🎶', '💝', '💖'];
+                        heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+                        heart.style.position = 'fixed';
+                        heart.style.fontSize = (Math.random() * 40 + 20) + 'px';
+                        heart.style.left = Math.random() * 100 + '%';
+                        heart.style.top = '100%';
+                        heart.style.transform = 'translateY(-100%)';
+                        heart.style.animation = `float ${Math.random() * 4 + 3}s infinite`;
+                        heart.style.zIndex = '9999';
+                        heart.style.pointerEvents = 'none';
+                        heart.style.opacity = '0.9';
+                        heart.style.textShadow = '0 0 10px rgba(255,80,120,0.5)';
+                        document.body.appendChild(heart);
+                        setTimeout(() => { try { heart.remove(); } catch(e) {} }, 6000);
+                    }, i * 100);
+                }
+            }
+            
+            function createLoveAnimations() {
+                // Add extra sparkling hearts around the card
+                for (let i = 0; i < 12; i++) {
+                    const sparkle = document.createElement('i');
+                    sparkle.className = 'fas fa-heart';
+                    sparkle.style.position = 'absolute';
+                    sparkle.style.color = ['#ff4d6d', '#ff8cae', '#ffb3c6', '#ff69b4'][Math.floor(Math.random()*4)];
+                    sparkle.style.fontSize = (Math.random()*30 + 15) + 'px';
+                    sparkle.style.left = Math.random() * 90 + '%';
+                    sparkle.style.top = Math.random() * 90 + '%';
+                    sparkle.style.animation = `heartbeat 1.5s infinite`;
+                    sparkle.style.opacity = '0.7';
+                    sparkle.style.zIndex = '50';
+                    document.querySelector('.valentine-card').appendChild(sparkle);
+                    setTimeout(() => sparkle.remove(), 5000);
+                }
+            }
+
+            // ---------- EVENT LISTENERS ----------
+            noBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleNoClick();
+            });
+
+            yesBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleYesClick();
+            });
+
+            // Set initial sassy text
+            sassyEl.textContent = "🧸 Bubsy, will you be mine? 🧸";
+            
+            // Ensure no video preview is visible – hide any potential iframe borders
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #hiddenYouTubeAudio {
+                    position: absolute;
+                    left: -9999px;
+                    top: -9999px;
+                    width: 0;
+                    height: 0;
+                    display: none;
+                    visibility: hidden;
+                }
+            `;
+            document.head.appendChild(style);
+            
+        })();
+    </script>
+    
+    <!-- Additional safety to ensure no video preview appears -->
+    <style>
+        /* Force hide any YouTube iframe or video elements */
+        iframe[src*="youtube"], 
+        iframe[src*="youtu.be"],
+        object[type*="application/x-shockwave-flash"],
+        embed {
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            left: -99999px !important;
+            top: -99999px !important;
+            width: 0 !important;
+            height: 0 !important;
+            pointer-events: none !important;
+            display: none !important;
+        }
+        /* But allow our specific audio iframe to be hidden properly */
+        #hiddenYouTubeAudio {
+            display: none !important;
+        }
+    </style>
+</body>
+</html>
